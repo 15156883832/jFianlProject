@@ -1,0 +1,189 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{
+	margin:0;
+	padding:0;
+}
+@media screen and (min-width:180px ){
+    body{
+        font-size: 14px;
+    }
+}
+@media screen and (min-width:321px ){
+    body{
+        font-size: 16px;
+    }
+}
+@media screen and (min-width:376px ){
+    body{
+        font-size: 18px;
+    }
+}
+body,html{
+	/**min-width:320px;
+	max-width:640px; 
+    margin:0 auto;**/
+	width:100%;
+	background:#fff;
+	font-family: 'Microsoft YaHei', Helvetica, 'STHeiti', Arial, sans-serif;
+	
+}
+header div{
+	width:100%;
+}
+header div img{
+	width:100%;
+	display:block;
+}
+
+.level_img img:nth-child(1){
+	position:absolute;
+	display:block;
+	width:22%!important;
+	margin:0 39%;
+}
+header div b{
+	display:block;
+	position:absolute;
+	width:100%;
+	text-align:center;
+	font-size:1.1em;
+	color:#fff;
+	margin-top:2%;
+}
+header div b span{
+	color:#fdbf12;
+	
+}
+
+
+.change_data{
+	display:block;
+	position:absolute;
+	width:80%;
+	margin:2% 0 0 10%;
+}
+.change_data>*{
+	vertical-align:middle;
+}
+
+.change_data div{
+	display:inline-block;
+	width:48%;
+	text-align:center;
+	color:#fff;
+}
+.change_data div:nth-child(2){
+	border-left:1px #fff solid;
+}
+.change_data div i{
+	font-style:normal;
+	color:#fdbf12;
+}
+.change_data div>*{
+	display:block;
+	margin:5% 0;
+}
+
+
+.font_01 p{
+	color:#555;
+	display:block;
+	position:absolute;
+	width:80%;
+	margin:3% 0 0 10%;
+	
+}
+
+section{
+	display:block;
+	width:90%;
+	margin:4% 0 0 5%;
+}
+section ul{
+	list-style:none;
+}
+
+ul li:nth-child(1){
+	color:#fff;
+	background-color:#8a4bf2;
+	text-align:center;
+	font-weight:bold;
+}
+
+
+ul li{
+	color:#444;
+}
+ul li{
+	border-right:1px #ccc solid;
+	border-left:1px #ccc solid;
+	border-bottom:1px #ccc solid;
+}
+
+ul li b{
+	display:inline-block;
+	width:22%;
+	vertical-align:middle;
+	text-align:center;
+	font-weight:bold;
+	font-size:.9em;
+
+}
+ul li p{
+	display:inline-block;
+	width:37%;
+	vertical-align:middle;
+	font-size:.9em;
+	padding:5% 0;
+}
+ul li p:nth-child(2){
+	border-right:1px #ccc solid;
+	border-left:1px #ccc solid;
+}
+li p i{
+	display:block;
+	width:90%;
+	margin:0 auto;
+	font-style:normal;
+}
+ul li span{
+	color:#ed7f02;
+}
+
+
+footer{
+}
+footer img{
+	display:block;
+	width:60%;
+	margin:5% 0 5% 20%;
+}
+
+
+
+.tip{
+	position:fixed;
+	background-color: rgba(0,0,0,.8);
+	width:100%;
+	height:120vh;
+	top:0;
+	display:none;
+}
+.tip img{
+	display:block;
+	width:80%;
+	margin:22% auto;
+}
+.tip button{
+	font-size:1.3em;
+	display:block;
+	width:50%;
+	padding:3% 0;
+	color:#ed7f02;
+	border:2px #ed7f02 solid;
+	background:none;
+	margin:0 auto;
+	border-radius:10px;
+}

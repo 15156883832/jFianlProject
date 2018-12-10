@@ -1,0 +1,9 @@
+jdbcUrl = jdbc:mysql://192.168.2.23:3306/sf-2.0-test?useUnicode=true&characterEncoding=utf-8
+user = root
+password = 123456
+devMode = true
+
+#jdbcUrl = jdbc:mysql://120.210.205.42:3306/sf-2.0-test?useUnicode=true&characterEncoding=utf-8
+#user = root
+#password = jojowo-123!@#
+#devMode = true

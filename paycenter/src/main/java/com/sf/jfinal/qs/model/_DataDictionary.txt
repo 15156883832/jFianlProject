@@ -1,0 +1,37 @@
+Table: crm_goods_platform_order
+--------------------+---------------+------+-----+---------+---------
+ Field              | Type          | Null | Key | Default | Remarks 
+--------------------+---------------+------+-----+---------+---------
+ id                 | CHAR(32)      | NO   | PRI |         | 主键id    
+ number             | VARCHAR(20)   | YES  |     |         | 订单编号（字母+数字）
+ good_id            | CHAR(32)      | NO   |     |         | 平台商品id  
+ good_number        | VARCHAR(20)   | YES  |     |         | 平台商品编号  
+ good_name          | VARCHAR(100)  | NO   |     |         | 商品名称    
+ good_icon          | VARCHAR(500)  | YES  |     |         | 商品icon图片
+ good_brand         | VARCHAR(10)   | YES  |     |         | 商品品牌    
+ good_model         | VARCHAR(100)  | YES  |     |         | 商品型号    
+ good_category      | VARCHAR(50)   | YES  |     |         | 商品类别    
+ customer_name      | VARCHAR(10)   | YES  |     |         | 用户姓名    
+ customer_contact   | VARCHAR(20)   | YES  |     |         | 联系方式    
+ customer_address   | VARCHAR(255)  | YES  |     |         | 详细地址    
+ purchase_num       | DECIMAL(10,2) | YES  |     | 0.00    | 购买数量    
+ good_amount        | DECIMAL(10,2) | YES  |     | 0.00    | 购买价格（商品金额总价）
+ placing_order_by   | CHAR(32)      | YES  |     |         | 下单人user_id
+ siteself_order_id  | CHAR(32)      | YES  |     |         | 关联的服务商商品 订单信息表主键id
+ placing_order_time | DATETIME(19)  | YES  |     |         | 下单时间    
+ payer              | CHAR(32)      | YES  |     |         | 付款人user_id
+ payment_time       | DATETIME(19)  | YES  |     |         | 付款时间    
+ pay_status         | CHAR(1)       | YES  |     |         | 支付状态(0未支付 1已支付)
+ status             | CHAR(1)       | YES  |     | 1       | 订单状态（0已下单 1待分配确认 2待发货 3已发货 4已完成 5已取消）
+ payment_type       | CHAR(1)       | YES  |     |         | 付款方式（0微信，1支付宝）
+ trade_no           | VARCHAR(50)   | YES  |     |         | 交易记录号(TN)
+ logistics_name     | VARCHAR(50)   | YES  |     |         | 物流名称    
+ logistics_no       | VARCHAR(50)   | YES  |     |         | 物流单号    
+ site_id            | CHAR(32)      | YES  |     |         | 服务商id   
+ creator            | VARCHAR(50)   | YES  |     |         | 订单创建人姓名 
+ supplier_id        | VARCHAR(50)   | YES  |     |         | 供应商id   
+ confirm_time       | DATETIME(19)  | YES  |     |         | 确认时间    
+ sendgood_time      | DATETIME(19)  | YES  |     |         | 发货时间    
+ finish_time        | DATETIME(19)  | YES  |     |         | 完成时间    
+--------------------+---------------+------+-----+---------+---------
+

@@ -1,0 +1,86 @@
+@charset "utf-8";
+/* CSS Document */
+
+*{
+	margin:0;
+	padding:0;
+}
+@media screen and (min-width:180px ){
+    body{
+        font-size: 14px;
+    }
+}
+@media screen and (min-width:321px ){
+    body{
+        font-size: 16px;
+    }
+}
+@media screen and (min-width:376px ){
+    body{
+        font-size: 18px;
+    }
+}
+body,html{
+	/**min-width:320px;
+	max-width:640px; 
+    margin:0 auto;**/
+	width:100%;
+	background:#fff;
+	font-family: 'Microsoft YaHei', Helvetica, 'STHeiti', Arial, sans-serif;
+	
+}
+img{
+	width:100%
+}
+header{
+	width:100%;
+	text-align:center;
+	color:#fff;
+}
+header div{
+	position:absolute;
+	width:100%;
+	text-align:center;
+}
+header b{
+	display:block;
+	font-size:1.2em;
+	margin:3% 0 0 0;
+}
+header p{
+	display:block;
+	font-size:1.1em;
+	margin:2% 0 8% 0;
+}
+section{
+	margin:6% 0 5% 0;
+}
+section h1{
+	display:block;
+	width:60%;
+	margin:0 0 0 20% ;
+}
+section ul{
+	list-style:none;
+	display:block;
+	width:90%;
+	margin:5% 0 0 5%;
+}
+section ul li{
+	display:inline-block;
+	width:49%;
+	vertical-align:middle;
+	margin:0 auto;
+}
+ul li p,ul li em{
+	display:block;
+	width:80%;
+	margin:0 auto;
+	color:#ef8b50;
+}
+
+li p b{
+	display:block;
+	font-size:1.1em;
+	margin:4% 0;
+}

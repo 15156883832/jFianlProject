@@ -1,0 +1,12 @@
+devMode = true
+# 配置sql目录，必须以/开头，该路径相对于WebRoot path。
+sql.path = /WEB-INF/sql
+
+# 是否开启微信公众号开发支持
+dev.weixin.enabled = true
+
+# 分页信息
+pagination.pageSize = 10
+
+## Captcha storage path
+captchaPath=/home/gaols/Codes/data/hx

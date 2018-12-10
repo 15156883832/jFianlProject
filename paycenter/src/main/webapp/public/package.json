@@ -1,0 +1,17 @@
+{
+  "name": "qs",
+  "version": "1.0.0",
+  "description": "qs front end js management",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "qs"
+  ],
+  "author": "gaols",
+  "license": "MIT",
+  "dependencies": {
+    "moment": "^2.15.1"
+  }
+}

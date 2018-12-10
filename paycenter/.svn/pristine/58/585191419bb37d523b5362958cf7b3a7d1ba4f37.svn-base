@@ -1,0 +1,403 @@
+function prepare(fee, ctx, oid) {
+    var elGetCode, lastDiscountCode, packages, tradeNo, lastConfirmed;
+    var mobileConfirmed = false;
+    var price = fee;
+
+    function showLoading(msg) {
+        return layer.msg(msg, {
+            icon: 16,
+            shade: 0.3
+        });
+    }
+
+    function reset() {
+        $('.icon-error').hide();
+        $('.discount-amount').hide();
+        $('.icon-right').hide();
+        $("#discount-span").text("0");
+        $('.fc-fd1520-span').text(price);
+    }
+
+    $(function () {
+        elGetCode = $("#smsCode");
+        elGetCode.on('click', function () {
+            getMobileCode();
+        });
+
+        $('#input-yhm').keyup(function () {
+            var val = $(this).val();
+            if (val.length < 4) {
+            	$(this).css({'width':'4rem'});
+            	reset();
+            } else if (val.length >= 4 && val != lastDiscountCode) {
+            	$(this).css({'width':'1.64rem'});
+                $('input[name="discountCode"]').val($.trim(val));
+                checkDiscountCode($.trim(val));
+            }
+            
+            lastDiscountCode = val;
+        });
+
+        $(".btn-back").click(back);
+        $("#btnConfirm").click(register);
+        $("#btnNavReg").click(toRegister);
+    });
+
+    function checkDiscountCode(code, callback) {
+        $.ajax({
+            type: "post",
+            url: ctx + "/checkDiscountCode/" + code,
+            success: function (data) {
+                if (200 == data.code) {
+                    $('.icon-error').hide();
+                    $('.discount-amount').show();
+                    $('.icon-right').show();
+                    $('#discount-span').text(data.data);
+                    $('.fc-fd1520-span').text(parseInt(price) - parseInt(data.data));
+                    if(data.desc =="fxm"){
+                    	$('.icon-right').html("分享码");
+                    }else if(data.desc =="yhm"){
+                    	$('.icon-right').html("优惠码");
+                    }
+                    if (callback) {
+                        lastConfirmed['discountCode'] = code;
+                        callback.call();
+                    }
+                } else if (400 == data.code) {
+                    if ($.trim(code)) {
+                        $('.icon-error').show();
+                    }
+                    $('.discount-amount').hide();
+                    $('.icon-right').hide();
+                    if (callback) {
+                        lastConfirmed['discountCode'] = "@0";
+                        callback.call();
+                    }
+                }
+            }
+        });
+    }
+
+    function checkSendTime(time) {
+        if (time <= 1) {
+            if (!mobileConfirmed) {
+                elGetCode.off('click').on('click', getMobileCode);
+            }
+            elGetCode.text("获取验证码");
+        } else {
+            elGetCode.off('click');
+            time = time - 1;
+            elGetCode.text("重新获取(" + time + ")");
+            setTimeout(function () {
+                checkSendTime(time);
+            }, 1000);
+        }
+    }
+
+// 完善信息
+    function toRegister() {
+        $('.ktzhpage').hide();
+        $('.zhxxpage').show();
+        $('input[name="login"]').focus();
+    }
+
+    function onRegistValidationOK() {
+        elGetCode.off('click');
+        mobileConfirmed = true;
+        lastConfirmed = {
+            vcode: $('input[name="vcode"]').val(),
+            discountCode: $('input[name="discountCode"]').val(),
+            tradeNo: $('input[name="tradeNo"]').val(),
+            openid: $('input[name="openid"]').val(),
+            login: $('input[name="login"]').val(),
+            password: $('input[name="password"]').val(),
+            passwordConfirmation: $('input[name="passwordConfirmation"]').val(),
+            company: $('input[name="company"]').val(),
+            mobile: $('input[name="mobile"]').val(),
+            code: $('input[name="code"]').val()
+        };
+
+        var items = $('.kt-item.hidden');
+        items.eq(0).removeClass("hidden");
+        items.eq(1).removeClass("hidden");
+        items.eq(2).removeClass("hidden");
+
+        $('#kt_mobile').text($('input[name="mobile"]').val());
+        $('#kt_login').text($('input[name="login"]').val());
+        $('#kt_company').text($('input[name="company"]').val());
+        $('.zhxxpage').hide();
+        $('.ktzhpage .sf_btn').removeClass("sf_btn-default").addClass("sf_btn-primary");
+        $('.ktzhpage').show();
+        $('input[name="mobile"]').attr('readonly', true).addClass("text-readonly");
+        $('input[name="code"]').attr('readonly', true).addClass("text-readonly");
+//				$('input[name="mobile"]').addClass("text-readonly");
+//				$('input[name="code"]').addClass("text-readonly");
+        $('#btn_pay').css("margin", '0.52rem 0');
+    }
+
+    function checkRegister(callback) {
+        var index = showLoading("账户校验");
+        $.ajax({
+            type: "post",
+            url: ctx + "/sfpay/checkRegist",
+            data: $('#registForm').serialize(),
+            success: function (data) {
+                var code = data.code;
+                if(200 == code) {
+                    if (callback) {
+                        callback.call(data);
+                    }
+                } else if (100 == code) {
+                    layer.msg("登录账号被占用");
+                } else if (101 == code) {
+                    layer.msg("手机号已被占用");
+                }
+            },
+            error: function () {
+                layer.msg("系统忙，请稍后再试");
+            },
+            complete: function () {
+                layer.close(index);
+            }
+        });
+    }
+
+    function onPayedSuccess() {
+        $.ajax({
+            type: "post",
+            url: ctx + "/sfpay/pay",
+            data: lastConfirmed,
+            success: function () {
+                window.location = ctx + "/toLogin/" + oid;
+            },
+            error: function () {
+                layer.msg("系统忙，请稍后再试");
+            },
+            complete: function () {
+            }
+        });
+    }
+
+    function onPayCancelled() {
+        $.ajax({
+            type: "post",
+            url: ctx + "/sfpay/cancel/" + tradeNo,
+            success: function () {
+                window.location = ctx + "/toLogin/" + oid;
+            },
+            error: function () {
+            }
+        });
+    }
+
+    function getMobileCode() {
+        var mobile = $('input[name="mobile"]').val();
+        if (!$.trim(mobile)) {
+            layer.msg("请输入有效的手机号");
+            return
+        }
+        if (!/^1\d{10}$/.test(mobile)) {
+            layer.msg("手机号格式不正确");
+            return
+        }
+
+        var url = ctx + "/checkMobile/" + mobile;
+        var idx = layer.load(0, {shade: false});
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            data: {mobile: mobile},
+            url: url,
+            success: function (data) {
+                if (200 == data.code) {
+                    checkSendTime(60);
+                    var smsUrl = ctx + "/sms";
+                    $.ajax({
+                        dataType: 'json',
+                        type: 'POST',
+                        data: {mobile: mobile},
+                        url: smsUrl,
+                        success: function (data) {
+                            if (200 == data.code) {
+                                var code = data.data;
+                                $('input[name="vcode"]').val(code);
+                            }
+                        }
+                    });
+                } else if (422 == data.code) {
+                    layer.msg("手机号已被占用");
+                }
+            },
+            complete: function() {
+                layer.close(idx);
+            }
+        });
+    }
+
+// 注册页面
+    function register() {
+        var validRes = $('.zhxxpage input').validate({
+            rules: {
+                'login': {
+                    required: '请输入登录账号',
+                    minlength: {
+                        msg: '登录账号长度不得少于4位',
+                        params: 4
+                    },
+                    custom: {
+                        params: function (val) {
+                            return /^[0-9a-zA-Z]*[0-9][0-9a-zA-Z]*$/.test(val) && /^[0-9a-zA-Z]*[a-zA-Z][0-9a-zA-Z]*$/.test(val);
+                        },
+                        msg: '登录账号应为字母和数字的组合'
+                    }
+                },
+                'password': {
+                    required: '请输入密码',
+                    minlength: {
+                        msg: '密码不得少于6位',
+                        params: 6
+                    }
+                },
+                'passwordConfirmation': {
+                    required: '请输入确认密码',
+                    custom: {
+                        params: function (val) {
+                            return val == $('input[name="password"]').val();
+                        },
+                        msg: '两次输入的密码不一致'
+                    }
+                },
+                'company': {
+                    required: '请输入企业名称',
+                    custom: {
+                        params: function (val) {
+                            return /^[\u4e00-\u9fa5]{4,}$/.test(val)
+                        },
+                        msg: '企业名称应为4个及以上汉字'
+                    }
+                },
+                'mobile': {
+                    required: '请输入手机号',
+                    mobile: '手机格式不正确'
+                },
+                'code': {
+                    required: '请输入验证码',
+                    custom: {
+                        params: function (val) {
+                            var vcode = $("input[name='vcode']").val();
+                            if (!$.trim(vcode)) {
+                                return false;
+                            }
+                            return !($.trim(val) && $.trim(vcode) && vcode != val);
+                        },
+                        msg: '验证码错误'
+                    }
+                }
+            }
+        });
+        if (validRes) {
+            checkRegister(onRegistValidationOK);
+        }
+    }
+
+    function back() {
+        if ($(".ktzhpage").is(":hidden")) {
+            $('.ktzhpage').show();
+            $('.zhxxpage').hide();
+        } else {
+            // back to login
+            window.location = ctx + '/toLogin/' + oid;
+        }
+    }
+
+    function onBridgeReady() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            packages,
+            function (res) {
+                // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                if (res.err_msg == "get_brand_wcpay_request：ok" || res.err_msg == "get_brand_wcpay_request:ok") {
+                    layer.msg("支付成功");
+                    $("#btn_pay").off('click');
+                    onPayedSuccess();
+                } else if (res.err_msg == "get_brand_wcpay_request：cancel" || res.err_msg == "get_brand_wcpay_request:cancel") {
+                    onPayCancelled();
+                } else if (res.err_msg == "get_brand_wcpay_request：fail" || res.err_msg == "get_brand_wcpay_request:fail") {
+                    onPayCancelled();
+                }
+            }
+        );
+    }
+
+    function doPay(data) {
+        packages = data.data.packages;
+        tradeNo = data.data.tradeNo;
+        $("input[name='tradeNo']").val(tradeNo);
+        lastConfirmed['tradeNo'] = tradeNo;
+
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+                document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+            } else {
+                onBridgeReady();
+            }
+        } else {
+            onBridgeReady();
+        }
+    }
+
+    function prePay() {
+        var index = showLoading("下单中");
+        $.ajax({
+            type: "post",
+            url: ctx + "/sfpay/prepay/" + oid,
+            dataType: 'json',
+            data: lastConfirmed,
+            success: function (data) {
+                var code = data.code;
+                if (422 == code) {
+                    layer.msg("请勿重复提交订单");
+                } else if (423 == code) {
+                    layer.msg("登录账号已被占用");
+                } else if (424 == code) {
+                    $('input[name="mobile"]').attr('readonly', false).removeClass('text-readonly');
+                    $('input[name="code"]').attr('readonly', false).removeClass('text-readonly');
+//							$('input[name="mobile"]').removeClass('text-readonly');
+//							$('input[name="code"]').removeClass('text-readonly');
+                    elGetCode.off('click').on('click', getMobileCode);
+                    layer.msg("手机号已被占用");
+                } else if (426 == code || 425 == code) {
+                    layer.msg("下单失败");
+                    $("#btn_pay").on('click', payEntry);
+                } else if (200 == code) {
+                    doPay(data);
+                } else {
+                    layer.msg("系统繁忙，请稍后再试。");
+                }
+            },
+            error: function () {
+                layer.msg("系统繁忙，请稍后再试。");
+                $("#btn_pay").on('click', payEntry);
+            },
+            complete: function () {
+                layer.close(index);
+            }
+        });
+    }
+
+    function payEntry() {
+        if (mobileConfirmed) {
+            $("#btn_pay").off("click");
+            checkDiscountCode($('#input-yhm').val(), function () {
+                prePay();
+            });
+        } else {
+            layer.msg("请完善个人信息");
+        }
+    }
+
+    $("#btn_pay").on('click', payEntry);
+}
